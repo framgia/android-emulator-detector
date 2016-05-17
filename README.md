@@ -1,4 +1,83 @@
-# Android-emulator-detector
+#Android emulator detector
+
+Easy to detect android emulator
+
+#### Last check: 17/05/2016
+    - BlueStacks Version 0.9.30 
+    - Genymotion Version 2.6.0
+    - Android Emulator 
+    - .....
+
+Download
+-------
+#####Gradle:
+
+Step 1. Add it in your root build.gradle at the end of repositories:
+
+```
+allprojects {
+	repositories {
+		...
+		maven { url "https://jitpack.io" }
+	}
+}
+```
+
+Step 2. Add the dependency
+```
+dependencies {
+	    compile 'com.github.framgia:android-emulator-detector:v1.0'
+}
+```
+
+#####Maven:
+
+Step 1. Add the JitPack repository to your build file
+```
+<repositories>
+	<repository>
+		<id>jitpack.io</id>
+		<url>https://jitpack.io</url>
+	</repository>
+</repositories>
+```
+
+Step 2. Add the dependency
+```
+<dependency>
+	<groupId>com.github.framgia</groupId>
+	<artifactId>android-emulator-detector</artifactId>
+	<version>v1.0</version>
+</dependency>
+```
+
+How to use
+-------
+Example:
+```
+EmulatorDetector.with(this)
+                .setCheckTelephony(true)
+                .setDebug(true)
+                .detect(new EmulatorDetector.OnEmulatorDetectorListener() {
+                    @Override
+                    public void onResult(boolean isEmulator) {
+                        
+                    }
+                });
+```
+
+- `setCheckTelephony` Check Imei, Operator network, Device ID...
+
+    If `true` we need permission. Please add line below into `AndroidManifest.xml`
+    ```
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    ```
+- `setDebug` Show log
+
+
+About
+-------
+
 
 License
 -------
