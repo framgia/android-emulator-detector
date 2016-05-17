@@ -1,6 +1,7 @@
 package com.framgia.android.emulator;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -12,6 +13,7 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,35 +35,60 @@ import java.util.List;
  * Created by pham.quy.hai on 5/16/16.
  */
 
+@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public final class EmulatorDetector {
 
     public interface OnEmulatorDetectorListener {
         void onResult(boolean isEmulator);
     }
 
-    private static final String[] KNOWN_NUMBERS = { // Default emulator phone numbers + VirusTotal
+    private static final String[] KNOWN_NUMBERS = {
             "15555215554", "15555215556", "15555215558", "15555215560", "15555215562",
             "15555215564", "15555215566","15555215568", "15555215570", "15555215572",
             "15555215574", "15555215576", "15555215578", "15555215580", "15555215582",
             "15555215584"};
+
     private static final String[] KNOWN_DEVICE_IDS = {
-            "000000000000000", // Default emulator id
-            "e21833235b6eef10", // VirusTotal id
+            "000000000000000",
+            "e21833235b6eef10",
             "012345678912345"};
 
-    private static final String[] KNOWN_IMSI_IDS = {"310260000000000"}; // Default imsi id
+    private static final String[] KNOWN_IMSI_IDS = {"310260000000000"};
 
-    private static String[] KNOWN_GENY_FILES = {"/dev/socket/genyd", "/dev/socket/baseband_genyd"};
-    private static String[] KNOWN_QEMU_DRIVERS = {"goldfish"};
+    private static final String[] KNOWN_GENY_FILES = {"/dev/socket/genyd",
+            "/dev/socket/baseband_genyd"};
+
+    private static final String[] KNOWN_QEMU_DRIVERS = {"goldfish"};
+
+    private static final String[] KNOWN_PIPES = {"/dev/socket/qemud", "/dev/qemu_pipe"};
+
+    private static final String[] KNOWN_FILES = {"/system/lib/libc_malloc_debug_qemu.so",
+            "/sys/qemu_trace",
+            "/system/bin/qemu-props"};
+
+    private static final Property[] KNOWN_PROPS = {new Property("init.svc.qemud", null),
+            new Property("init.svc.qemu-props", null), new Property("qemu.hw.mainkeys", null),
+            new Property("qemu.sf.fake_camera", null), new Property("qemu.sf.lcd_density", null),
+            new Property("ro.bootloader", "unknown"), new Property("ro.bootmode", "unknown"),
+            new Property("ro.hardware", "goldfish"), new Property("ro.kernel.android.qemud", null),
+            new Property("ro.kernel.qemu.gles", null), new Property("ro.kernel.qemu", "1"),
+            new Property("ro.product.device", "generic"), new Property("ro.product.model", "sdk"),
+            new Property("ro.product.name", "sdk"),
+            new Property("ro.serialno", null)};
+
+    private static final int MIN_PROPERTIES_THRESHOLD = 0x5;
 
     private static Context mContext;
     private boolean isDebug = false;
     private boolean isTelephony = false;
-
     private List<String> mListPackageName = new ArrayList<>();
 
+    private static EmulatorDetector mEmulatorDetector;
+
     public static EmulatorDetector with(Context pContext) {
-        return new EmulatorDetector(pContext);
+        if (mEmulatorDetector == null)
+            mEmulatorDetector = new EmulatorDetector(pContext);
+        return mEmulatorDetector;
     }
 
     public EmulatorDetector(Context pContext) {
@@ -71,8 +98,9 @@ public final class EmulatorDetector {
         mListPackageName.add("com.bignox.app");
     }
 
-    public void setDebug(boolean isDebug) {
+    public EmulatorDetector setDebug(boolean isDebug) {
         this.isDebug = isDebug;
+        return this;
     }
 
     public boolean isDebug() {
@@ -83,20 +111,23 @@ public final class EmulatorDetector {
         return isTelephony;
     }
 
-    public void setCheckTelephony(boolean telephony) {
-        isTelephony = telephony;
+    public EmulatorDetector setCheckTelephony(boolean telephony) {
+        this.isTelephony = telephony;
+        return this;
     }
 
-    public void addPackageName(String pPackageName) {
-        mListPackageName.add(pPackageName);
+    public EmulatorDetector addPackageName(String pPackageName) {
+        this.mListPackageName.add(pPackageName);
+        return this;
     }
 
-    public void addPackageName(List<String> pListPackageName) {
-        mListPackageName.addAll(pListPackageName);
+    public EmulatorDetector addPackageName(List<String> pListPackageName) {
+        this.mListPackageName.addAll(pListPackageName);
+        return this;
     }
 
     public List<String> getPackageNameList() {
-        return mListPackageName;
+        return this.mListPackageName;
     }
 
     public void detect(final OnEmulatorDetectorListener pOnEmulatorDetectorListener) {
@@ -119,7 +150,7 @@ public final class EmulatorDetector {
 
         // Check Basic
         if (!result) {
-            //result = checkBasic();
+            result = checkBasic();
             log(" Check basic " + result);
         }
 
@@ -165,7 +196,12 @@ public final class EmulatorDetector {
     }
 
     private boolean checkAdvanced() {
-        boolean result = checkTelephony() || hasGenyFiles() || hasQEmuDrivers();
+        boolean result = checkTelephony()
+                || hasGenyFiles()
+                || hasQEmuDrivers()
+                || hasPipes()
+                || hasQEmuFiles()
+                || hasQEmuProps();
         return result;
     }
 
@@ -247,7 +283,7 @@ public final class EmulatorDetector {
         String operatorName = ((TelephonyManager)
                 mContext.getSystemService(Context.TELEPHONY_SERVICE)).getNetworkOperatorName();
         if (operatorName.equalsIgnoreCase("android")) {
-            log(" hasKnownImsi is true");
+            log(" hasOperatorNameAndroid is true");
             return true;
         }
         return false;
@@ -290,7 +326,54 @@ public final class EmulatorDetector {
         return false;
     }
 
-    public String getDeviceInfo() {
+    private boolean hasPipes() {
+        for (String pipe : KNOWN_PIPES) {
+            File qemu_socket = new File(pipe);
+            if (qemu_socket.exists()) {
+                log(" hasPipes is true");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean hasQEmuFiles() {
+        for (String pipe : KNOWN_FILES) {
+            File qemu_file = new File(pipe);
+            if (qemu_file.exists()) {
+                log(" hasQEmuFiles is true");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean hasQEmuProps() {
+        int found_props = 0;
+
+        for (Property property : KNOWN_PROPS) {
+            String property_value = getProp(mContext, property.name);
+            if ((property.seek_value == null) && (property_value != null)) {
+                found_props++;
+            }
+            if ((property.seek_value != null)
+                    && (property_value.indexOf(property.seek_value) != -1)) {
+                found_props++;
+            }
+
+        }
+
+        if (found_props >= MIN_PROPERTIES_THRESHOLD) {
+            log(" hasQEmuProps is true");
+            return true;
+        }
+
+        return false;
+    }
+
+    public static String getDeviceInfo() {
         return "Build.PRODUCT: " + Build.PRODUCT + "\n" +
                 "Build.MANUFACTURER: " + Build.MANUFACTURER + "\n" +
                 "Build.BRAND: " + Build.BRAND + "\n" +
@@ -300,6 +383,24 @@ public final class EmulatorDetector {
                 "Build.FINGERPRINT: " + Build.FINGERPRINT;
     }
 
+    private String getProp(Context context, String property) {
+        try {
+            ClassLoader classLoader = context.getClassLoader();
+            Class<?> systemProperties = classLoader.loadClass("android.os.SystemProperties");
+
+            Method get = systemProperties.getMethod("get", String.class);
+
+            Object[] params = new Object[1];
+            params[0] = new String(property);
+
+            return (String) get.invoke(systemProperties, params);
+        } catch (IllegalArgumentException iAE) {
+            // empty catch
+        } catch (Exception exception) {
+            // empty catch
+        }
+        return null;
+    }
 
     private void log(String str) {
         if (this.isDebug) {
