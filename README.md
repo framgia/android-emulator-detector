@@ -1,5 +1,7 @@
 #Android emulator detector
 
+![](https://jitpack.io/v/framgia/android-emulator-detector.svg)
+
 Easy to detect android emulator
 
 #### Last check: 17/05/2016
@@ -26,7 +28,7 @@ allprojects {
 Step 2. Add the dependency
 ```
 dependencies {
-	    compile 'com.github.framgia:android-emulator-detector:v1.0'
+	    compile 'com.github.framgia:android-emulator-detector:1.0'
 }
 ```
 
