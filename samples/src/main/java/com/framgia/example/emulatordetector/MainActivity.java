@@ -22,18 +22,23 @@ public class MainActivity extends AppCompatActivity {
                 .setDebug(true)
                 .detect(new EmulatorDetector.OnEmulatorDetectorListener() {
                     @Override
-                    public void onResult(boolean isEmulator) {
-                        if (isEmulator) {
-                            textView.setText("This device is emulator"
-                                    + "\nTelephony enable is "
-                                    + EmulatorDetector.with(MainActivity.this).isCheckTelephony()
-                                    + "\n\n\n" + EmulatorDetector.getDeviceInfo());
-                        } else {
-                            textView.setText("This device is not emulator"
-                                    + "\nTelephony enable is "
-                                    + EmulatorDetector.with(MainActivity.this).isCheckTelephony()
-                                    + "\n\n\n" + EmulatorDetector.getDeviceInfo());
-                        }
+                    public void onResult(final boolean isEmulator) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (isEmulator) {
+                                    textView.setText("This device is emulator"
+                                            + "\nTelephony enable is "
+                                            + EmulatorDetector.with(MainActivity.this).isCheckTelephony()
+                                            + "\n\n\n" + EmulatorDetector.getDeviceInfo());
+                                } else {
+                                    textView.setText("This device is not emulator"
+                                            + "\nTelephony enable is "
+                                            + EmulatorDetector.with(MainActivity.this).isCheckTelephony()
+                                            + "\n\n\n" + EmulatorDetector.getDeviceInfo());
+                                }
+                            }
+                        });
                         Log.d(getClass().getName(), "Running on emulator --> " + isEmulator);
                     }
                 });
