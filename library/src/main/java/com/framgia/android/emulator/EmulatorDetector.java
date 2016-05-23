@@ -55,16 +55,22 @@ public final class EmulatorDetector {
 
     private static final String[] KNOWN_IMSI_IDS = {"310260000000000"};
 
-    private static final String[] KNOWN_GENY_FILES = {"/dev/socket/genyd",
+    private static final String[] KNOWN_GENY_FILES = {
+            "/dev/socket/genyd",
             "/dev/socket/baseband_genyd"};
 
     private static final String[] KNOWN_QEMU_DRIVERS = {"goldfish"};
 
     private static final String[] KNOWN_PIPES = {"/dev/socket/qemud", "/dev/qemu_pipe"};
 
-    private static final String[] KNOWN_FILES = {"/system/lib/libc_malloc_debug_qemu.so",
+    private static final String[] KNOWN_FILES = {
+            "/system/lib/libc_malloc_debug_qemu.so",
             "/sys/qemu_trace",
             "/system/bin/qemu-props"};
+
+    private static final String[] KNOWN_X86_FILES = {
+            "ueventd.android_x86.rc",
+            "x86.prop"};
 
     private static final Property[] KNOWN_PROPS = {new Property("init.svc.qemud", null),
             new Property("init.svc.qemu-props", null), new Property("qemu.hw.mainkeys", null),
@@ -201,7 +207,7 @@ public final class EmulatorDetector {
                 || hasQEmuDrivers()
                 || hasPipes()
                 || hasQEmuFiles()
-                || hasQEmuProps();
+                || (hasQEmuProps() && hasX86Files());
         return result;
     }
 
@@ -343,6 +349,18 @@ public final class EmulatorDetector {
             File qemu_file = new File(pipe);
             if (qemu_file.exists()) {
                 log(" hasQEmuFiles is true");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean hasX86Files() {
+        for (String pipe : KNOWN_X86_FILES) {
+            File qemu_file = new File(pipe);
+            if (qemu_file.exists()) {
+                log(" hasX86Files is true");
                 return true;
             }
         }
