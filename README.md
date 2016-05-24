@@ -28,7 +28,7 @@ allprojects {
 Step 2. Add the dependency
 ```
 dependencies {
-	    compile 'com.github.framgia:android-emulator-detector:1.0'
+	    compile 'com.github.framgia:android-emulator-detector:1.1.1'
 }
 ```
 
@@ -49,13 +49,14 @@ Step 2. Add the dependency
 <dependency>
 	<groupId>com.github.framgia</groupId>
 	<artifactId>android-emulator-detector</artifactId>
-	<version>v1.0</version>
+	<version>1.1.1</version>
 </dependency>
 ```
 
 How to use
 -------
 Example:
+
 ```
 EmulatorDetector.with(this)
                 .setCheckTelephony(true)
