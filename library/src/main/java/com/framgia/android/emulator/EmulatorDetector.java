@@ -63,11 +63,6 @@ public final class EmulatorDetector {
 
     private static final String[] KNOWN_PIPES = {"/dev/socket/qemud", "/dev/qemu_pipe"};
 
-    private static final String[] KNOWN_FILES = {
-            "/system/lib/libc_malloc_debug_qemu.so",
-            "/sys/qemu_trace",
-            "/system/bin/qemu-props"};
-
     private static final String[] KNOWN_X86_FILES = {
             "ueventd.android_x86.rc",
             "x86.prop"};
@@ -206,7 +201,6 @@ public final class EmulatorDetector {
                 || hasGenyFiles()
                 || hasQEmuDrivers()
                 || hasPipes()
-                || hasQEmuFiles()
                 || (hasQEmuProps() && hasX86Files());
         return result;
     }
@@ -337,18 +331,6 @@ public final class EmulatorDetector {
             File qemu_socket = new File(pipe);
             if (qemu_socket.exists()) {
                 log(" hasPipes is true");
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private boolean hasQEmuFiles() {
-        for (String pipe : KNOWN_FILES) {
-            File qemu_file = new File(pipe);
-            if (qemu_file.exists()) {
-                log(" hasQEmuFiles is true");
                 return true;
             }
         }
