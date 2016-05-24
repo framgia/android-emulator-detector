@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
@@ -42,32 +43,32 @@ public final class EmulatorDetector {
         void onResult(boolean isEmulator);
     }
 
-    private static final String[] KNOWN_NUMBERS = {
+    private static final String[] PHONE_NUMBERS = {
             "15555215554", "15555215556", "15555215558", "15555215560", "15555215562",
             "15555215564", "15555215566","15555215568", "15555215570", "15555215572",
             "15555215574", "15555215576", "15555215578", "15555215580", "15555215582",
             "15555215584"};
 
-    private static final String[] KNOWN_DEVICE_IDS = {
+    private static final String[] DEVICE_IDS = {
             "000000000000000",
             "e21833235b6eef10",
             "012345678912345"};
 
-    private static final String[] KNOWN_IMSI_IDS = {"310260000000000"};
+    private static final String[] IMSI_IDS = {"310260000000000"};
 
-    private static final String[] KNOWN_GENY_FILES = {
+    private static final String[] GENY_FILES = {
             "/dev/socket/genyd",
             "/dev/socket/baseband_genyd"};
 
-    private static final String[] KNOWN_QEMU_DRIVERS = {"goldfish"};
+    private static final String[] QEMU_DRIVERS = {"goldfish"};
 
-    private static final String[] KNOWN_PIPES = {"/dev/socket/qemud", "/dev/qemu_pipe"};
+    private static final String[] PIPES = {"/dev/socket/qemud", "/dev/qemu_pipe"};
 
-    private static final String[] KNOWN_X86_FILES = {
+    private static final String[] X86_FILES = {
             "ueventd.android_x86.rc",
             "x86.prop"};
 
-    private static final Property[] KNOWN_PROPS = {new Property("init.svc.qemud", null),
+    private static final Property[] PROPERTIES = {new Property("init.svc.qemud", null),
             new Property("init.svc.qemu-props", null), new Property("qemu.hw.mainkeys", null),
             new Property("qemu.sf.fake_camera", null), new Property("qemu.sf.lcd_density", null),
             new Property("ro.bootloader", "unknown"), new Property("ro.bootmode", "unknown"),
@@ -76,6 +77,8 @@ public final class EmulatorDetector {
             new Property("ro.product.device", "generic"), new Property("ro.product.model", "sdk"),
             new Property("ro.product.name", "sdk"),
             new Property("ro.serialno", null)};
+
+    private static final String IP = "10.0.2.15";
 
     private static final int MIN_PROPERTIES_THRESHOLD = 0x5;
 
@@ -152,19 +155,19 @@ public final class EmulatorDetector {
         // Check Basic
         if (!result) {
             result = checkBasic();
-            log(" Check basic " + result);
+            log("Check basic " + result);
         }
 
         // Check Advanced
         if (!result) {
             result = checkAdvanced();
-            log(" Check Advanced " + result);
+            log("Check Advanced " + result);
         }
 
-        // Check Package Name Trick
+        // Check Package Name
         if (!result) {
             result = checkPackageName();
-            log(" Check Package Name Trick " + result);
+            log("Check Package Name " + result);
         }
 
         return result;
@@ -198,10 +201,11 @@ public final class EmulatorDetector {
 
     private boolean checkAdvanced() {
         boolean result = checkTelephony()
-                || hasGenyFiles()
-                || hasQEmuDrivers()
-                || hasPipes()
-                || (hasQEmuProps() && hasX86Files());
+                || checkGenyFiles()
+                || checkQEmuDrivers()
+                || checkPipes()
+                || checkIp()
+                || (checkQEmuProps() && checkX86Files());
         return result;
     }
 
@@ -209,12 +213,11 @@ public final class EmulatorDetector {
         final PackageManager packageManager = mContext.getPackageManager();
         List<ApplicationInfo> packages = packageManager
                 .getInstalledApplications(PackageManager.GET_META_DATA);
-        log("--- Package Installed ---");
         for (ApplicationInfo packageInfo : packages) {
             String packageName = packageInfo.packageName;
             boolean isEmulator = mListPackageName.contains(packageName);
-            log("--> " + packageName + " --> " + isEmulator);
             if (isEmulator) {
+                log("Detected " + packageName);
                 return true;
             }
         }
@@ -224,24 +227,24 @@ public final class EmulatorDetector {
     private boolean checkTelephony() {
         if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_PHONE_STATE)
                 == PackageManager.PERMISSION_GRANTED && this.isTelephony) {
-            return hasKnownPhoneNumber()
-                    || hasKnownDeviceId()
-                    || hasKnownImsi()
-                    || hasOperatorNameAndroid();
+            return checkPhoneNumber()
+                    || checkDeviceId()
+                    || checkImsi()
+                    || checkOperatorNameAndroid();
         }
 
         return false;
     }
 
-    private boolean hasKnownPhoneNumber() {
+    private boolean checkPhoneNumber() {
         TelephonyManager telephonyManager =
                 (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
 
         String phoneNumber = telephonyManager.getLine1Number();
 
-        for (String number : KNOWN_NUMBERS) {
+        for (String number : PHONE_NUMBERS) {
             if (number.equalsIgnoreCase(phoneNumber)) {
-                log(" hasKnownPhoneNumber is true");
+                log(" check phone number is detected");
                 return true;
             }
 
@@ -249,15 +252,15 @@ public final class EmulatorDetector {
         return false;
     }
 
-    private boolean hasKnownDeviceId() {
+    private boolean checkDeviceId() {
         TelephonyManager telephonyManager =
                 (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
 
         String deviceId = telephonyManager.getDeviceId();
 
-        for (String known_deviceId : KNOWN_DEVICE_IDS) {
+        for (String known_deviceId : DEVICE_IDS) {
             if (known_deviceId.equalsIgnoreCase(deviceId)) {
-                log(" hasKnownDeviceId is true");
+                log("Check device id is detected");
                 return true;
             }
 
@@ -265,35 +268,35 @@ public final class EmulatorDetector {
         return false;
     }
 
-    private boolean hasKnownImsi() {
+    private boolean checkImsi() {
         TelephonyManager telephonyManager =
                 (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
         String imsi = telephonyManager.getSubscriberId();
 
-        for (String known_imsi : KNOWN_IMSI_IDS) {
+        for (String known_imsi : IMSI_IDS) {
             if (known_imsi.equalsIgnoreCase(imsi)) {
-                log(" hasKnownImsi is true");
+                log("Check imsi is detected");
                 return true;
             }
         }
         return false;
     }
 
-    private boolean hasOperatorNameAndroid() {
+    private boolean checkOperatorNameAndroid() {
         String operatorName = ((TelephonyManager)
                 mContext.getSystemService(Context.TELEPHONY_SERVICE)).getNetworkOperatorName();
         if (operatorName.equalsIgnoreCase("android")) {
-            log(" hasOperatorNameAndroid is true");
+            log("Check operator name android is detected");
             return true;
         }
         return false;
     }
 
-    private boolean hasGenyFiles() {
-        for (String file : KNOWN_GENY_FILES) {
+    private boolean checkGenyFiles() {
+        for (String file : GENY_FILES) {
             File geny_file = new File(file);
             if (geny_file.exists()) {
-                log(" hasGenyFiles is true");
+                log("Check genymotion is detected");
                 return true;
             }
         }
@@ -301,7 +304,7 @@ public final class EmulatorDetector {
         return false;
     }
 
-    private boolean hasQEmuDrivers() {
+    private boolean checkQEmuDrivers() {
         for (File drivers_file : new File[]{new File("/proc/tty/drivers"), new File("/proc/cpuinfo")}) {
             if (drivers_file.exists() && drivers_file.canRead()) {
                 byte[] data = new byte[1024];
@@ -314,9 +317,9 @@ public final class EmulatorDetector {
                 }
 
                 String driver_data = new String(data);
-                for (String known_qemu_driver : KNOWN_QEMU_DRIVERS) {
+                for (String known_qemu_driver : QEMU_DRIVERS) {
                     if (driver_data.indexOf(known_qemu_driver) != -1) {
-                        log(" hasQEmuDrivers is true");
+                        log("Check QEmuDrivers is detected");
                         return true;
                     }
                 }
@@ -326,11 +329,11 @@ public final class EmulatorDetector {
         return false;
     }
 
-    private boolean hasPipes() {
-        for (String pipe : KNOWN_PIPES) {
+    private boolean checkPipes() {
+        for (String pipe : PIPES) {
             File qemu_socket = new File(pipe);
             if (qemu_socket.exists()) {
-                log(" hasPipes is true");
+                log("Check pipes is detected");
                 return true;
             }
         }
@@ -338,11 +341,11 @@ public final class EmulatorDetector {
         return false;
     }
 
-    private boolean hasX86Files() {
-        for (String pipe : KNOWN_X86_FILES) {
+    private boolean checkX86Files() {
+        for (String pipe : X86_FILES) {
             File qemu_file = new File(pipe);
             if (qemu_file.exists()) {
-                log(" hasX86Files is true");
+                log("Check X86 system is detected");
                 return true;
             }
         }
@@ -350,10 +353,10 @@ public final class EmulatorDetector {
         return false;
     }
 
-    private boolean hasQEmuProps() {
+    private boolean checkQEmuProps() {
         int found_props = 0;
 
-        for (Property property : KNOWN_PROPS) {
+        for (Property property : PROPERTIES) {
             String property_value = getProp(mContext, property.name);
             if ((property.seek_value == null) && (property_value != null)) {
                 found_props++;
@@ -366,21 +369,41 @@ public final class EmulatorDetector {
         }
 
         if (found_props >= MIN_PROPERTIES_THRESHOLD) {
-            log(" hasQEmuProps is true");
+            log("Check QEmuProps is detected");
             return true;
         }
 
         return false;
     }
 
-    public static String getDeviceInfo() {
-        return "Build.PRODUCT: " + Build.PRODUCT + "\n" +
-                "Build.MANUFACTURER: " + Build.MANUFACTURER + "\n" +
-                "Build.BRAND: " + Build.BRAND + "\n" +
-                "Build.DEVICE: " + Build.DEVICE + "\n" +
-                "Build.MODEL: " + Build.MODEL + "\n" +
-                "Build.HARDWARE: " + Build.HARDWARE + "\n" +
-                "Build.FINGERPRINT: " + Build.FINGERPRINT;
+    private boolean checkIp() {
+        boolean ipDetected = false;
+        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.INTERNET)
+            == PackageManager.PERMISSION_GRANTED) {
+            String[] args = { "/system/bin/netcfg" };
+            try {
+                ProcessBuilder builder = new ProcessBuilder(args);
+                builder.directory(new File("/system/bin/"));
+                builder.redirectErrorStream(true);
+                Process process = builder.start();
+                InputStream in = process.getInputStream();
+                byte[] re = new byte[1024];
+                while (in.read(re) != -1) {
+                    String lineData = new String(re);
+                    log("Check ip -> " + lineData);
+                    if (!TextUtils.isEmpty(lineData) && lineData.contains(IP)) {
+                        ipDetected = true;
+                        log("Check ip is detected");
+                        break;
+                    }
+                }
+                in.close();
+
+            } catch (Exception ex) {
+                // empty catch
+            }
+        }
+        return ipDetected;
     }
 
     private String getProp(Context context, String property) {
@@ -406,5 +429,15 @@ public final class EmulatorDetector {
         if (this.isDebug) {
             Log.d(getClass().getName(), str);
         }
+    }
+
+    public static String getDeviceInfo() {
+        return "Build.PRODUCT: " + Build.PRODUCT + "\n" +
+            "Build.MANUFACTURER: " + Build.MANUFACTURER + "\n" +
+            "Build.BRAND: " + Build.BRAND + "\n" +
+            "Build.DEVICE: " + Build.DEVICE + "\n" +
+            "Build.MODEL: " + Build.MODEL + "\n" +
+            "Build.HARDWARE: " + Build.HARDWARE + "\n" +
+            "Build.FINGERPRINT: " + Build.FINGERPRINT;
     }
 }

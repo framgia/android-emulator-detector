@@ -29,7 +29,7 @@ allprojects {
 Step 2. Add the dependency
 ```groovy
 dependencies {
-	    compile 'com.github.framgia:android-emulator-detector:1.1.1'
+	    compile 'com.github.framgia:android-emulator-detector:1.2.0'
 }
 ```
 
@@ -61,6 +61,7 @@ Example:
 ```java
 EmulatorDetector.with(this)
                 .setCheckTelephony(true)
+                .addPackageName("com.bluestacks")
                 .setDebug(true)
                 .detect(new EmulatorDetector.OnEmulatorDetectorListener() {
                     @Override
@@ -72,16 +73,21 @@ EmulatorDetector.with(this)
 
 - `setCheckTelephony` Check Imei, Operator network, Device ID...
 
-If `true` we need permission. Please add line below into `AndroidManifest.xml`
-```xml
-<uses-permission android:name="android.permission.READ_PHONE_STATE" />
-```
+	If `true` we need permission `android.permission.READ_PHONE_STATE`
 - `setDebug` Show log
 
+- `addPackageName` To add the package but only on VMs
+- Add permission `android.permission.INTERNET` to detect Virtual Networking
 
-About
+Description
 -------
 
+To update the virtual machine device detection with highest accuracy, 
+We are going to check periodically the virtual machine latest version and combine with the statistics that we experienced from our actual project.
+ 
+Project have refered the idea of some other projects.
+
+If there are problems, please notify us. Create issue [here] (https://github.com/framgia/android-emulator-detector/issues/new)
 
 License
 -------
