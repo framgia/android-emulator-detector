@@ -1,10 +1,11 @@
 #Android emulator detector
 
-![](https://jitpack.io/v/framgia/android-emulator-detector.svg)
+![](https://jitpack.io/v/framgia/android-emulator-detector.svg) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Android%20emulator%20detector-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/3635)
 
 Easy to detect android emulator
 
-#### Last check: 17/05/2016
+#### Last check: 30/05/2016
+    - Checked on real devices in Device Farm (https://aws.amazon.com/device-farm/)
     - BlueStacks Version 0.9.30 
     - Genymotion Version 2.6.0
     - Android Emulator 
