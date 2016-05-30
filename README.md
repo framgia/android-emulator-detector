@@ -16,7 +16,7 @@ Download
 
 Step 1. Add it in your root build.gradle at the end of repositories:
 
-```
+```groovy
 allprojects {
 	repositories {
 		...
@@ -26,7 +26,7 @@ allprojects {
 ```
 
 Step 2. Add the dependency
-```
+```groovy
 dependencies {
 	    compile 'com.github.framgia:android-emulator-detector:1.1.1'
 }
@@ -35,7 +35,7 @@ dependencies {
 #####Maven:
 
 Step 1. Add the JitPack repository to your build file
-```
+```xml
 <repositories>
 	<repository>
 		<id>jitpack.io</id>
@@ -45,7 +45,7 @@ Step 1. Add the JitPack repository to your build file
 ```
 
 Step 2. Add the dependency
-```
+```xml
 <dependency>
 	<groupId>com.github.framgia</groupId>
 	<artifactId>android-emulator-detector</artifactId>
@@ -57,7 +57,7 @@ How to use
 -------
 Example:
 
-```
+```java
 EmulatorDetector.with(this)
                 .setCheckTelephony(true)
                 .setDebug(true)
@@ -71,10 +71,10 @@ EmulatorDetector.with(this)
 
 - `setCheckTelephony` Check Imei, Operator network, Device ID...
 
-    If `true` we need permission. Please add line below into `AndroidManifest.xml`
-    ```
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    ```
+If `true` we need permission. Please add line below into `AndroidManifest.xml`
+```xml
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+```
 - `setDebug` Show log
 
 
