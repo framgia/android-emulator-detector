@@ -3,6 +3,7 @@
     package="com.framgia.example.emulatordetector">
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"

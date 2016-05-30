@@ -5,7 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.framgia.android.emulator.EmulatorDetector;
+import com.framgia.android.emulator.*;
+import com.framgia.android.emulator.BuildConfig;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
         EmulatorDetector.with(this)
                 .setCheckTelephony(true)
+                .addPackageName("com.bluestacks")
                 .setDebug(true)
                 .detect(new EmulatorDetector.OnEmulatorDetectorListener() {
                     @Override
@@ -28,19 +30,22 @@ public class MainActivity extends AppCompatActivity {
                             public void run() {
                                 if (isEmulator) {
                                     textView.setText("This device is emulator"
-                                            + "\nTelephony enable is "
-                                            + EmulatorDetector.with(MainActivity.this).isCheckTelephony()
-                                            + "\n\n\n" + EmulatorDetector.getDeviceInfo());
+                                        + getCheckInfo());
                                 } else {
                                     textView.setText("This device is not emulator"
-                                            + "\nTelephony enable is "
-                                            + EmulatorDetector.with(MainActivity.this).isCheckTelephony()
-                                            + "\n\n\n" + EmulatorDetector.getDeviceInfo());
+                                            + getCheckInfo());
                                 }
                             }
                         });
                         Log.d(getClass().getName(), "Running on emulator --> " + isEmulator);
                     }
                 });
+    }
+
+    private String getCheckInfo() {
+        return "\nTelephony enable is "
+            + EmulatorDetector.with(MainActivity.this).isCheckTelephony()
+            + "\n\n\n" + EmulatorDetector.getDeviceInfo()
+            + "\n\nEmulator Detector version " + BuildConfig.VERSION_NAME;
     }
 }
