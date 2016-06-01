@@ -44,29 +44,43 @@ public final class EmulatorDetector {
     }
 
     private static final String[] PHONE_NUMBERS = {
-            "15555215554", "15555215556", "15555215558", "15555215560", "15555215562",
-            "15555215564", "15555215566","15555215568", "15555215570", "15555215572",
-            "15555215574", "15555215576", "15555215578", "15555215580", "15555215582",
-            "15555215584"};
+        "15555215554", "15555215556", "15555215558", "15555215560", "15555215562", "15555215564",
+        "15555215566", "15555215568", "15555215570", "15555215572", "15555215574", "15555215576",
+        "15555215578", "15555215580", "15555215582", "15555215584"
+    };
 
     private static final String[] DEVICE_IDS = {
-            "000000000000000",
-            "e21833235b6eef10",
-            "012345678912345"};
+        "000000000000000",
+        "e21833235b6eef10",
+        "012345678912345"
+    };
 
-    private static final String[] IMSI_IDS = {"310260000000000"};
+    private static final String[] IMSI_IDS = {
+        "310260000000000"
+    };
 
     private static final String[] GENY_FILES = {
-            "/dev/socket/genyd",
-            "/dev/socket/baseband_genyd"};
+        "/dev/socket/genyd",
+        "/dev/socket/baseband_genyd"
+    };
 
     private static final String[] QEMU_DRIVERS = {"goldfish"};
 
-    private static final String[] PIPES = {"/dev/socket/qemud", "/dev/qemu_pipe"};
+    private static final String[] PIPES = {
+        "/dev/socket/qemud",
+        "/dev/qemu_pipe"
+    };
 
     private static final String[] X86_FILES = {
             "ueventd.android_x86.rc",
-            "x86.prop"};
+            "x86.prop"
+    };
+
+    private static final String[] ANDY_FILES = {
+        "fstab.andy",
+        "ueventd.andy.rc",
+        "ueventd.goldfish.rc",
+    };
 
     private static final Property[] PROPERTIES = {new Property("init.svc.qemud", null),
             new Property("init.svc.qemu-props", null), new Property("qemu.hw.mainkeys", null),
@@ -202,6 +216,7 @@ public final class EmulatorDetector {
     private boolean checkAdvanced() {
         boolean result = checkTelephony()
                 || checkGenyFiles()
+                || checkAndyFiles()
                 || checkQEmuDrivers()
                 || checkPipes()
                 || checkIp()
@@ -346,6 +361,18 @@ public final class EmulatorDetector {
             File qemu_file = new File(pipe);
             if (qemu_file.exists()) {
                 log("Check X86 system is detected");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean checkAndyFiles() {
+        for (String pipe : ANDY_FILES) {
+            File qemu_file = new File(pipe);
+            if (qemu_file.exists()) {
+                log("Check Andy is detected");
                 return true;
             }
         }
