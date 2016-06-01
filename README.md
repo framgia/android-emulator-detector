@@ -4,11 +4,12 @@
 
 Easy to detect android emulator
 
-#### Last check: 30/05/2016
+#### Last check: 01/06/2016
     - Checked on real devices in Device Farm (https://aws.amazon.com/device-farm/)
     - BlueStacks Version 0.9.30 
     - Genymotion Version 2.6.0
     - Android Emulator 
+    - Andy 46.2.207.0
     - .....
 
 Download
@@ -29,7 +30,7 @@ allprojects {
 Step 2. Add the dependency
 ```groovy
 dependencies {
-	    compile 'com.github.framgia:android-emulator-detector:1.2.0'
+	    compile 'com.github.framgia:android-emulator-detector:1.3.0'
 }
 ```
 
@@ -50,7 +51,7 @@ Step 2. Add the dependency
 <dependency>
 	<groupId>com.github.framgia</groupId>
 	<artifactId>android-emulator-detector</artifactId>
-	<version>1.1.1</version>
+	<version>1.3.0</version>
 </dependency>
 ```
 
