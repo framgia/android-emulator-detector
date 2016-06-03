@@ -78,8 +78,7 @@ public final class EmulatorDetector {
 
     private static final String[] ANDY_FILES = {
         "fstab.andy",
-        "ueventd.andy.rc",
-        "ueventd.goldfish.rc",
+        "ueventd.andy.rc"
     };
 
     private static final Property[] PROPERTIES = {new Property("init.svc.qemud", null),
@@ -247,7 +246,6 @@ public final class EmulatorDetector {
                     || checkImsi()
                     || checkOperatorNameAndroid();
         }
-
         return false;
     }
 
@@ -315,7 +313,6 @@ public final class EmulatorDetector {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -352,7 +349,6 @@ public final class EmulatorDetector {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -364,7 +360,6 @@ public final class EmulatorDetector {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -376,7 +371,6 @@ public final class EmulatorDetector {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -399,7 +393,6 @@ public final class EmulatorDetector {
             log("Check QEmuProps is detected");
             return true;
         }
-
         return false;
     }
 
