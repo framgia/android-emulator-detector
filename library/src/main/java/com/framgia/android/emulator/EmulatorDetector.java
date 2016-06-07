@@ -72,8 +72,14 @@ public final class EmulatorDetector {
     };
 
     private static final String[] X86_FILES = {
-            "ueventd.android_x86.rc",
-            "x86.prop"
+        "ueventd.android_x86.rc",
+        "x86.prop",
+        "ueventd.ttVM_x86.rc",
+        "init.ttVM_x86.rc",
+        "fstab.ttVM_x86",
+        "fstab.vbox86",
+        "init.vbox86.rc",
+        "ueventd.vbox86.rc"
     };
 
     private static final String[] ANDY_FILES = {
@@ -81,15 +87,23 @@ public final class EmulatorDetector {
         "ueventd.andy.rc"
     };
 
-    private static final Property[] PROPERTIES = {new Property("init.svc.qemud", null),
-            new Property("init.svc.qemu-props", null), new Property("qemu.hw.mainkeys", null),
-            new Property("qemu.sf.fake_camera", null), new Property("qemu.sf.lcd_density", null),
-            new Property("ro.bootloader", "unknown"), new Property("ro.bootmode", "unknown"),
-            new Property("ro.hardware", "goldfish"), new Property("ro.kernel.android.qemud", null),
-            new Property("ro.kernel.qemu.gles", null), new Property("ro.kernel.qemu", "1"),
-            new Property("ro.product.device", "generic"), new Property("ro.product.model", "sdk"),
-            new Property("ro.product.name", "sdk"),
-            new Property("ro.serialno", null)};
+    private static final Property[] PROPERTIES = {
+        new Property("init.svc.qemud", null),
+        new Property("init.svc.qemu-props", null),
+        new Property("qemu.hw.mainkeys", null),
+        new Property("qemu.sf.fake_camera", null),
+        new Property("qemu.sf.lcd_density", null),
+        new Property("ro.bootloader", "unknown"),
+        new Property("ro.bootmode", "unknown"),
+        new Property("ro.hardware", "goldfish"),
+        new Property("ro.kernel.android.qemud", null),
+        new Property("ro.kernel.qemu.gles", null),
+        new Property("ro.kernel.qemu", "1"),
+        new Property("ro.product.device", "generic"),
+        new Property("ro.product.model", "sdk"),
+        new Property("ro.product.name", "sdk"),
+        new Property("ro.serialno", null)
+    };
 
     private static final String IP = "10.0.2.15";
 

@@ -1,15 +1,18 @@
 #Android emulator detector
 
-![](https://jitpack.io/v/framgia/android-emulator-detector.svg) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Android%20emulator%20detector-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/3635)
+[![](https://jitpack.io/v/framgia/android-emulator-detector.svg)](https://jitpack.io/#framgia/android-emulator-detector) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Android%20emulator%20detector-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/3635)
 
 Easy to detect android emulator
 
-#### Last check: 01/06/2016
+#### Last check: 07/06/2016
     - Checked on real devices in Device Farm (https://aws.amazon.com/device-farm/)
     - BlueStacks Version 0.9.30 
     - Genymotion Version 2.6.0
     - Android Emulator 
     - Andy 46.2.207.0
+    - MEmu play
+    - Nox App Player
+    - Koplayer
     - .....
 
 Download
@@ -30,7 +33,7 @@ allprojects {
 Step 2. Add the dependency
 ```groovy
 dependencies {
-	    compile 'com.github.framgia:android-emulator-detector:1.3.1'
+	    compile 'com.github.framgia:android-emulator-detector:1.3.2'
 }
 ```
 
@@ -51,7 +54,7 @@ Step 2. Add the dependency
 <dependency>
 	<groupId>com.github.framgia</groupId>
 	<artifactId>android-emulator-detector</artifactId>
-	<version>1.3.1</version>
+	<version>1.3.2</version>
 </dependency>
 ```
 
