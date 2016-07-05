@@ -33,7 +33,7 @@ allprojects {
 Step 2. Add the dependency
 ```groovy
 dependencies {
-	    compile 'com.github.framgia:android-emulator-detector:1.3.2'
+	    compile 'com.github.framgia:android-emulator-detector:1.3.3'
 }
 ```
 
@@ -54,7 +54,7 @@ Step 2. Add the dependency
 <dependency>
 	<groupId>com.github.framgia</groupId>
 	<artifactId>android-emulator-detector</artifactId>
-	<version>1.3.2</version>
+	<version>1.3.3</version>
 </dependency>
 ```
 

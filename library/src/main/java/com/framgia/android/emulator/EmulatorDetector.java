@@ -10,7 +10,6 @@ import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -415,6 +414,7 @@ public final class EmulatorDetector {
         if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.INTERNET)
             == PackageManager.PERMISSION_GRANTED) {
             String[] args = { "/system/bin/netcfg" };
+            StringBuilder stringBuilder = new StringBuilder();
             try {
                 ProcessBuilder builder = new ProcessBuilder(args);
                 builder.directory(new File("/system/bin/"));
@@ -423,18 +423,30 @@ public final class EmulatorDetector {
                 InputStream in = process.getInputStream();
                 byte[] re = new byte[1024];
                 while (in.read(re) != -1) {
-                    String lineData = new String(re);
-                    log("Check ip -> " + lineData);
-                    if (!TextUtils.isEmpty(lineData) && lineData.contains(IP)) {
-                        ipDetected = true;
-                        log("Check ip is detected");
-                        break;
-                    }
+                    stringBuilder.append(new String(re));
                 }
                 in.close();
 
             } catch (Exception ex) {
                 // empty catch
+            }
+            
+            String netData = stringBuilder.toString();
+            log("netcfg data -> " + netData);
+            
+            if (!TextUtils.isEmpty(netData)) {
+                String[] array = netData.split("\n");
+
+                for (String lan:
+                    array) {
+                    if ( (lan.contains("wlan0") || lan.contains("tunl0") || lan.contains("eth0") )
+                        && lan.contains(IP)) {
+                        ipDetected = true;
+                        log("Check IP is detected");
+                        break;
+                    }
+                }
+
             }
         }
         return ipDetected;
