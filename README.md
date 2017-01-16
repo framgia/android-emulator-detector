@@ -4,16 +4,19 @@
 
 Easy to detect android emulator
 
-#### Last check: 07/06/2016
+#### Last check: 16/01/2017
     - Checked on real devices in Device Farm (https://aws.amazon.com/device-farm/)
-    - BlueStacks Version 0.9.30 
-    - Genymotion Version 2.6.0
+    - BlueStacks
+    - Genymotion
     - Android Emulator 
     - Andy 46.2.207.0
     - MEmu play
     - Nox App Player
     - Koplayer
     - .....
+
+#### Change logs
+    - 1.4.0 : Update database & With Telephony function auto detect Telephony Support
 
 Download
 -------
@@ -33,29 +36,8 @@ allprojects {
 Step 2. Add the dependency
 ```groovy
 dependencies {
-	    compile 'com.github.framgia:android-emulator-detector:1.3.3'
+	    compile 'com.github.framgia:android-emulator-detector:1.4.0'
 }
-```
-
-#####Maven:
-
-Step 1. Add the JitPack repository to your build file
-```xml
-<repositories>
-	<repository>
-		<id>jitpack.io</id>
-		<url>https://jitpack.io</url>
-	</repository>
-</repositories>
-```
-
-Step 2. Add the dependency
-```xml
-<dependency>
-	<groupId>com.github.framgia</groupId>
-	<artifactId>android-emulator-detector</artifactId>
-	<version>1.3.3</version>
-</dependency>
 ```
 
 How to use
