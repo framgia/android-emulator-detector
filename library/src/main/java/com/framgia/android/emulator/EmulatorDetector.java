@@ -116,18 +116,20 @@ public final class EmulatorDetector {
 
     private static final int MIN_PROPERTIES_THRESHOLD = 0x5;
 
-    @SuppressLint("StaticFieldLeak")
-    private static Context mContext;
+    private final Context mContext;
     private boolean isDebug = false;
     private boolean isTelephony = false;
     private List<String> mListPackageName = new ArrayList<>();
 
-    @SuppressLint("StaticFieldLeak")
+    @SuppressLint("StaticFieldLeak") //Since we use application context now this won't leak memory anymore. This is only to please Lint
     private static EmulatorDetector mEmulatorDetector;
 
     public static EmulatorDetector with(Context pContext) {
+        if (pContext == null) {
+            throw new IllegalArgumentException("Context must not be null.");
+        }
         if (mEmulatorDetector == null)
-            mEmulatorDetector = new EmulatorDetector(pContext);
+            mEmulatorDetector = new EmulatorDetector(pContext.getApplicationContext());
         return mEmulatorDetector;
     }
 
@@ -137,7 +139,7 @@ public final class EmulatorDetector {
         mListPackageName.add("com.bluestacks");
         mListPackageName.add("com.bignox.app");
     }
-
+    
     public EmulatorDetector setDebug(boolean isDebug) {
         this.isDebug = isDebug;
         return this;
