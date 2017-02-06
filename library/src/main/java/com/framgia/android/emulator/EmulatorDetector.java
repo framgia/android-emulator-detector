@@ -4,8 +4,9 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
@@ -119,6 +120,7 @@ public final class EmulatorDetector {
     private final Context mContext;
     private boolean isDebug = false;
     private boolean isTelephony = false;
+    private boolean isCheckPackage = true;
     private List<String> mListPackageName = new ArrayList<>();
 
     @SuppressLint("StaticFieldLeak") //Since we use application context now this won't leak memory anymore. This is only to please Lint
@@ -153,8 +155,17 @@ public final class EmulatorDetector {
         return isTelephony;
     }
 
+    public boolean isCheckPackage() {
+        return isCheckPackage;
+    }
+
     public EmulatorDetector setCheckTelephony(boolean telephony) {
         this.isTelephony = telephony;
+        return this;
+    }
+
+    public EmulatorDetector setCheckPackage(boolean chkPackage) {
+        this.isCheckPackage = chkPackage;
         return this;
     }
 
@@ -250,15 +261,17 @@ public final class EmulatorDetector {
     }
 
     private boolean checkPackageName() {
+        if (!isCheckPackage || mListPackageName.isEmpty()) {
+            return false;
+        }
         final PackageManager packageManager = mContext.getPackageManager();
-        List<ApplicationInfo> packages = packageManager
-            .getInstalledApplications(PackageManager.GET_META_DATA);
-        for (ApplicationInfo packageInfo : packages) {
-            String packageName = packageInfo.packageName;
-            boolean isEmulator = mListPackageName.contains(packageName);
-            if (isEmulator) {
-                log("Detected " + packageName);
-                return true;
+        for (final String pkgName : mListPackageName) {
+            final Intent tryIntent = packageManager.getLaunchIntentForPackage(pkgName);
+            if (tryIntent != null) {
+                final List<ResolveInfo> resolveInfos = packageManager.queryIntentActivities(tryIntent, PackageManager.MATCH_DEFAULT_ONLY);
+                if (!resolveInfos.isEmpty()) {
+                    return true;
+                }
             }
         }
         return false;
