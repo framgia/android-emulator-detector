@@ -1,19 +1,16 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
 
-repositories {
-    mavenCentral()
-    jcenter ()
+configurations {
+    all*.exclude group: 'com.android.support', module: 'support-v13'
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 28
 
     defaultConfig {
         applicationId "com.framgia.example.emulatordetector"
         minSdkVersion 15
-        targetSdkVersion 25
+        targetSdkVersion 28
         versionCode 1
         versionName "1.4.0"
     }
@@ -30,9 +27,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile project(':library')
-    compile 'com.github.hotchemi:permissionsdispatcher:2.3.1'
-    annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:2.3.1'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation project(':library')
+    implementation 'com.github.hotchemi:permissionsdispatcher:2.4.0'
+    annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:2.4.0'
 }
