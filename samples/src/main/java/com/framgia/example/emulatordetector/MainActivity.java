@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         // KoPlayer
         // MEmu
 
-        MainActivityPermissionsDispatcher.checkEmulatorDetectorWithCheck(this);
+        MainActivityPermissionsDispatcher.checkEmulatorDetectorWithPermissionCheck(this);
     }
 
     @NeedsPermission(Manifest.permission.READ_PHONE_STATE)
