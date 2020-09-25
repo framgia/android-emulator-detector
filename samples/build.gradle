@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId "com.framgia.example.emulatordetector"
         minSdkVersion 15
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.4.0"
     }
@@ -23,8 +23,7 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation project(':library')
     implementation 'com.github.hotchemi:permissionsdispatcher:3.3.1'
     annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:3.3.1'
