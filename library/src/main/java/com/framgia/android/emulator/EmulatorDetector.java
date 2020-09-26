@@ -12,7 +12,6 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import java.io.File;
@@ -292,57 +291,56 @@ public final class EmulatorDetector {
 
     private boolean checkPhoneNumber() {
         TelephonyManager telephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+        try {
+            @SuppressLint({"HardwareIds", "MissingPermission"})
+            String phoneNumber = telephonyManager.getLine1Number();
 
-        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(mContext, Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(mContext, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return false;
-        }
-        @SuppressLint("HardwareIds")
-        String phoneNumber = telephonyManager.getLine1Number();
-
-        for (String number : PHONE_NUMBERS) {
-            if (number.equalsIgnoreCase(phoneNumber)) {
-                log(" check phone number is detected");
-                return true;
+            for (String number : PHONE_NUMBERS) {
+                if (number.equalsIgnoreCase(phoneNumber)) {
+                    log(" check phone number is detected");
+                    return true;
+                }
             }
+        } catch (Exception e) {
+            log("No permission to detect access of Line1Number");
         }
         return false;
     }
 
     private boolean checkDeviceId() {
         TelephonyManager telephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+        try {
+            @SuppressLint({"HardwareIds", "MissingPermission"})
+            String deviceId = telephonyManager.getDeviceId();
 
-        @SuppressLint("HardwareIds")
-        String deviceId = telephonyManager.getDeviceId();
+            for (String known_deviceId : DEVICE_IDS) {
+                if (known_deviceId.equalsIgnoreCase(deviceId)) {
+                    log("Check device id is detected");
+                    return true;
+                }
 
-        for (String known_deviceId : DEVICE_IDS) {
-            if (known_deviceId.equalsIgnoreCase(deviceId)) {
-                log("Check device id is detected");
-                return true;
             }
-
+        } catch (Exception e) {
+            log("No permission to detect access of DeviceId");
         }
         return false;
     }
 
     private boolean checkImsi() {
         TelephonyManager telephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
-        @SuppressLint("HardwareIds")
-        String imsi = telephonyManager.getSubscriberId();
 
-        for (String known_imsi : IMSI_IDS) {
-            if (known_imsi.equalsIgnoreCase(imsi)) {
-                log("Check imsi is detected");
-                return true;
+        try {
+            @SuppressLint({"HardwareIds", "MissingPermission"})
+            String imsi = telephonyManager.getSubscriberId();
+
+            for (String known_imsi : IMSI_IDS) {
+                if (known_imsi.equalsIgnoreCase(imsi)) {
+                    log("Check imsi is detected");
+                    return true;
+                }
             }
+        } catch (Exception e) {
+            log("No permission to detect access of SubscriberId");
         }
         return false;
     }
