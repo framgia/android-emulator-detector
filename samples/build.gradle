@@ -1,19 +1,13 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
-
-repositories {
-    mavenCentral()
-    jcenter ()
-}
+apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId "com.framgia.example.emulatordetector"
         minSdkVersion 15
-        targetSdkVersion 25
+        targetSdkVersion 30
         versionCode 1
         versionName "1.4.0"
     }
@@ -30,9 +24,10 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile project(':library')
-    compile 'com.github.hotchemi:permissionsdispatcher:2.3.1'
-    annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:2.3.1'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation project(':library')
+    implementation 'com.github.hotchemi:permissionsdispatcher:3.3.1'
+    annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:3.3.1'
+    implementation "androidx.core:core-ktx:+"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

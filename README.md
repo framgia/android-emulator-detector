@@ -59,7 +59,12 @@ EmulatorDetector.with(this)
 
 - `setCheckTelephony` Check Imei, Operator network, Device ID...
 
-	If `true` we need permission `android.permission.READ_PHONE_STATE`
+	If `true` we need permission 
+	
+	`   <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
+        <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
+        <uses-permission android:name="android.permission.READ_SMS" />`
+        
 - `setDebug` Show log
 
 - `addPackageName` To add the package but only on VMs
