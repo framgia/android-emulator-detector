@@ -1,6 +1,7 @@
 package com.framgia.example.emulatordetector;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -9,7 +10,6 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.framgia.android.emulator.BuildConfig;
 import com.framgia.android.emulator.EmulatorDetector;
 
 import permissions.dispatcher.NeedsPermission;
@@ -18,12 +18,14 @@ import permissions.dispatcher.OnPermissionDenied;
 import permissions.dispatcher.OnShowRationale;
 import permissions.dispatcher.PermissionRequest;
 import permissions.dispatcher.RuntimePermissions;
+import com.framgia.android.emulator.BuildConfig;
 
 @RuntimePermissions
 public class MainActivity extends AppCompatActivity {
 
     private TextView textView;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
