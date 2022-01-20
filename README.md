@@ -1,4 +1,4 @@
-#Android emulator detector
+# Android emulator detector
 
 [![](https://jitpack.io/v/framgia/android-emulator-detector.svg)](https://jitpack.io/#framgia/android-emulator-detector) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Android%20emulator%20detector-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/3635)
 
